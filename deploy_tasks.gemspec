@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "deploy_tasks/version"
+require "deploy_tasks"
 
 Gem::Specification.new do |s|
   s.name        = "deploy_tasks"
@@ -13,6 +13,8 @@ Gem::Specification.new do |s|
   s.description = %q{Common deploy tasks}
 
   s.rubyforge_project = "deploy_tasks"
+
+  s.add_dependency 'rails'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

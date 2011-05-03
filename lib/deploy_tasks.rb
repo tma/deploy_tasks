@@ -1,3 +1,5 @@
+require 'rails/railtie'
+
 module DeployTasks
   VERSION = "0.1.0"
   
