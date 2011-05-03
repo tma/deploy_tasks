@@ -19,23 +19,55 @@ namespace :deploy do
   task :production do
     message '>> Are you sure to deploy to production? (type yes): ', true
     if STDIN.gets.chomp == 'yes'
-      if Rake::Task['trans:fetch:all'].present?
-        message 'Pulling translations..'
-        Rake::Task['trans:fetch:all'].execute
-      end
-      
       if working_tree_dirty?
         message 'Please clean your dirty tree!'; exit
       end
+
+      if pull_translations?
+        message 'Pulling translations..'
+        Rake::Task['trans:fetch:all'].execute
+
+        if working_tree_dirty?
+          message 'Please commit the pulled translations!'; exit
+        end
+      end
+      
+      if run_juicer?
+        message 'Juicing CSS and JavaScript..'
+        Rake::Task['deploy:juice'].execute
+
+        if working_tree_dirty?
+          message 'Please commit the juiced assets!'; exit
+        end
+      end
       
       push_to('production')
-      migrate_database_of_app('calculate')
-      open_app('calculate')
+      migrate_database_of_app(RAILS_APP)
+      open_app(RAILS_APP)
     end
+  end
+  
+  desc 'Generate minified CSS and JavaScript files'
+  task :juice do
+    # css
+    options = '--force --document-root public/'
+    puts `cd #{Rails.root} && juicer merge #{options} public/stylesheets/application.css`
+
+    # js
+    options = '--force -i -s -m closure_compiler --document-root public/'
+    puts `cd #{Rails.root} && juicer merge #{options} public/javascripts/application.js`
   end
   
   def working_tree_dirty?
     `cd #{Rails.root} && git status --short -uno`.present?
+  end
+  
+  def pull_translations?
+    Rake::Task['trans:fetch:all'].present?
+  end
+  
+  def run_juicer?
+    `which juicer`.present?
   end
 
   def push_to(env)
