@@ -1,7 +1,7 @@
 require 'rails/railtie'
 
 module DeployTasks
-  VERSION = "0.1.0"
+  VERSION = "0.1.1"
   
   class Base < Rails::Railtie
     rake_tasks do
