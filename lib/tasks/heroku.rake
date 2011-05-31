@@ -47,6 +47,33 @@ namespace :deploy do
     end
   end
   
+  desc 'Deploy the hotfix branch'
+  task :hotfix do
+    if working_tree_dirty?
+      message 'Please clean your dirty tree!'
+    else
+      message 'Pushing hotfix branch to production/master..'
+      `git push production hotfix:master`
+    end
+  end
+  
+  desc 'Create the hotfix branch'
+  task :create_hotfix do
+    if working_tree_dirty?
+      message 'Please clean your dirty tree!'
+    else
+      message 'Creating the branch hotfix from production/master..'
+      `git checkout -b hotfix production/master`
+    end
+  end
+
+  desc 'Remove the hotfix branch'
+  task :remove_hotfix do
+    message 'Deleting the hotfix branch..'
+    `git checkout master`
+    `git branch -d hotfix`
+  end
+  
   desc 'Generate minified CSS and JavaScript files'
   task :juice do
     # css

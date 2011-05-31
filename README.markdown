@@ -9,10 +9,15 @@ RAILS_APP like this:
 Heroku
 ------
 
-You get the following rake tasks:
+You get the following rake tasks (run `rake -T` to see the descriptions):
 
  * deploy:production
  * deploy:staging
+
+ * deploy:create_hotfix
+ * deploy:hotfix
+ * deploy:remove_hotfix
+
  * deploy:juice (if you use juicer)
 
 The deploy tasks pull translations from webtranslateit.com if you use it, juice
