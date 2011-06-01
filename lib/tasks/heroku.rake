@@ -1,9 +1,9 @@
 namespace :deploy do
   desc 'Deploy to staging'
   task :staging do
-    if Rake::Task['trans:fetch:all'].present?
+    if pull_translations?
       message 'Pulling translations..'
-      Rake::Task['trans:fetch:all'].execute
+      Rake::Task['deploy:translations'].execute
     end
     
     if working_tree_dirty?
@@ -25,7 +25,7 @@ namespace :deploy do
 
       if pull_translations?
         message 'Pulling translations..'
-        Rake::Task['trans:fetch:all'].execute
+        Rake::Task['deploy:translations'].execute
 
         if working_tree_dirty?
           message 'Please commit the pulled translations!'; exit
@@ -85,12 +85,17 @@ namespace :deploy do
     puts `cd #{Rails.root} && juicer merge #{options} public/javascripts/application.js`
   end
   
+  desc 'Pull translations'
+  task :translations do
+    puts `cd #{Rails.root} && wti pull --force`
+  end
+  
   def working_tree_dirty?
     `cd #{Rails.root} && git status --short -uno`.present?
   end
   
   def pull_translations?
-    Rake::Task['trans:fetch:all'].present?
+    `which wti`.present?
   end
   
   def run_juicer?
