@@ -12,6 +12,7 @@ namespace :deploy do
 
     push_to('staging')
     migrate_database_of_app("#{RAILS_APP}-staging")
+    restart_app("#{RAILS_APP}-staging")
     open_app("#{RAILS_APP}-staging")
   end
 
@@ -43,6 +44,7 @@ namespace :deploy do
       
       push_to('production')
       migrate_database_of_app(RAILS_APP)
+      restart_app(RAILS_APP)
       open_app(RAILS_APP)
     end
   end
@@ -110,6 +112,11 @@ namespace :deploy do
   def migrate_database_of_app(heroku_app)
     message "Migrate the database of #{heroku_app}.."
     `cd #{Rails.root} && heroku rake db:migrate --app #{heroku_app}`
+  end
+
+  def restart_app(heroku_app)
+    message "Restart the app #{heroku_app}.."
+    `cd #{Rails.root} && heroku restart --app #{heroku_app}`
   end
   
   def open_app(heroku_app)
